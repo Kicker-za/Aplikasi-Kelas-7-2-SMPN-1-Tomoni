@@ -1,0 +1,6 @@
+{
+  "name": "SIMPATI Sekolah",
+  "description": "Sistem Informasi Manajemen Pelayanan Administrasi Terpadu Sekolah dengan Dashboard Admin, Real-time Sync, 2FA, Enkripsi AES-256, Notifikasi, Export PDF, & Dark Mode.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
