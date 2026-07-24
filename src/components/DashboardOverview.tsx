@@ -8,12 +8,12 @@ import {
   QrCode,
   ArrowUpRight,
   Sparkles,
-  Download,
   Send,
   Lock,
   Network,
   Camera,
   HeartHandshake,
+  Webhook,
 } from 'lucide-react';
 import {
   SchoolProfile,
@@ -33,7 +33,6 @@ interface OverviewProps {
   users: User[];
   auditLogs: AuditLog[];
   onNavigate: (tab: TabKey) => void;
-  onExportPDF: () => void;
   onOpenParentAuth?: () => void;
 }
 
@@ -45,7 +44,6 @@ export const DashboardOverview: React.FC<OverviewProps> = ({
   users,
   auditLogs,
   onNavigate,
-  onExportPDF,
   onOpenParentAuth,
 }) => {
   const totalHadir = attendance.filter((a) => a.status === 'hadir').length;
@@ -79,13 +77,6 @@ export const DashboardOverview: React.FC<OverviewProps> = ({
             >
               <Send className="h-4 w-4" />
               Tandai Pulang ({totalPulang})
-            </button>
-            <button
-              onClick={onExportPDF}
-              className="flex items-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2.5 text-xs md:text-sm font-semibold text-white backdrop-blur-md transition"
-            >
-              <Download className="h-4 w-4" />
-              Cetak Laporan PDF
             </button>
           </div>
         </div>
@@ -162,74 +153,68 @@ export const DashboardOverview: React.FC<OverviewProps> = ({
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Top Row: Portal Orang Tua & User dan Foto Profil Side-by-Side */}
             {onOpenParentAuth && (
               <button
                 onClick={onOpenParentAuth}
-                className="col-span-1 sm:col-span-2 flex items-center justify-between rounded-2xl border border-sky-300 dark:border-sky-800 bg-gradient-to-r from-sky-500 to-indigo-600 p-4 text-white shadow-md hover:opacity-95 transition"
+                className="flex items-center justify-between rounded-2xl border border-sky-300 dark:border-sky-800 bg-gradient-to-r from-sky-500 to-indigo-600 p-4 text-white shadow-md hover:opacity-95 transition"
               >
                 <div className="flex items-center gap-3">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md text-white shrink-0">
                     <HeartHandshake className="h-6 w-6" />
                   </div>
                   <div className="text-left">
-                    <h4 className="text-sm font-extrabold">Portal Pendaftaran & Login Orang Tua</h4>
+                    <h4 className="text-sm font-extrabold">Portal Orang Tua</h4>
                     <p className="text-xs text-sky-100">
-                      Akses mandiri wali murid: Daftar akun baru, login via WhatsApp OTP, dan pantau status penjemputan anak.
+                      Daftar & login wali murid via OTP
                     </p>
                   </div>
                 </div>
-                <div className="hidden sm:flex items-center gap-1 bg-white/20 hover:bg-white/30 backdrop-blur-md px-3 py-1.5 rounded-xl text-xs font-bold text-white shrink-0">
-                  <span>Masuk Portal</span>
+                <div className="hidden sm:flex items-center gap-1 bg-white/20 hover:bg-white/30 backdrop-blur-md px-2.5 py-1.5 rounded-xl text-xs font-bold text-white shrink-0">
+                  <span>Masuk</span>
                   <ArrowUpRight className="h-4 w-4" />
                 </div>
               </button>
             )}
 
             <button
-              onClick={() => onNavigate('class_structure')}
-              className="flex items-start gap-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 p-4 text-left hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-slate-800 transition"
+              onClick={() => onNavigate('user_management')}
+              className="flex items-center justify-between rounded-2xl border border-sky-300 dark:border-sky-800 bg-gradient-to-r from-blue-600 to-sky-600 p-4 text-white shadow-md hover:opacity-95 transition"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white shrink-0">
-                <Network className="h-5 w-5" />
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md text-white shrink-0">
+                  <Users className="h-6 w-6" />
+                </div>
+                <div className="text-left">
+                  <h4 className="text-sm font-extrabold">User dan Foto Profil</h4>
+                  <p className="text-xs text-sky-100">
+                    Kelola akun & upload foto HP
+                  </p>
+                </div>
               </div>
-              <div>
-                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Struktur Organisasi Kelas 7-2</h4>
-                <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
-                  Lihat & kelola susunan pengurus Wali Kelas, Ketua, Sekretaris & Seksi.
-                </p>
+              <div className="hidden sm:flex items-center gap-1 bg-white/20 hover:bg-white/30 backdrop-blur-md px-2.5 py-1.5 rounded-xl text-xs font-bold text-white shrink-0">
+                <span>Kelola</span>
+                <ArrowUpRight className="h-4 w-4" />
               </div>
             </button>
 
+            {/* 1. Absensi & Kehadiran */}
             <button
-              onClick={() => onNavigate('class_documentation')}
-              className="flex items-start gap-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 p-4 text-left hover:border-sky-500 hover:bg-sky-50/50 dark:hover:bg-slate-800 transition"
+              onClick={() => onNavigate('attendance')}
+              className="flex items-start gap-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 p-4 text-left hover:border-emerald-500 hover:bg-emerald-50/50 dark:hover:bg-slate-800 transition"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-500 text-white shrink-0">
-                <Camera className="h-5 w-5" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shrink-0">
+                <CalendarCheck className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Galeri Kegiatan & Momen 7-2</h4>
+                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Absensi & Kehadiran</h4>
                 <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
-                  Foto-foto Pramuka, Gotong Royong, Classmeeting, & Pentas Seni 7-2.
+                  Pindai barcode HP guru, rekapan harian, mingguan & bulanan.
                 </p>
               </div>
             </button>
 
-            <button
-              onClick={() => onNavigate('school_data')}
-              className="flex items-start gap-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 p-4 text-left hover:border-sky-500 hover:bg-sky-50/50 dark:hover:bg-slate-800 transition"
-            >
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-600 text-white shrink-0">
-                <Building2 className="h-5 w-5" />
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Edit Data & Logo Sekolah</h4>
-                <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
-                  Ubah identitas sekolah, upload logo, dan perbarui data real-time.
-                </p>
-              </div>
-            </button>
-
+            {/* 2. Notifikasi Pulang Sekolah */}
             <button
               onClick={() => onNavigate('smart_pickup')}
               className="flex items-start gap-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 p-4 text-left hover:border-amber-500 hover:bg-amber-50/50 dark:hover:bg-slate-800 transition"
@@ -238,24 +223,73 @@ export const DashboardOverview: React.FC<OverviewProps> = ({
                 <QrCode className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Smart Parent Pickup & QR</h4>
+                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Notifikasi Pulang Sekolah</h4>
                 <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
                   Kirim notifikasi WA ke ortu & verifikasi penjemputan via scan QR.
                 </p>
               </div>
             </button>
 
+            {/* 4. Struktur Kelas 7-2 */}
             <button
-              onClick={() => onNavigate('reports_pdf')}
+              onClick={() => onNavigate('class_structure')}
               className="flex items-start gap-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 p-4 text-left hover:border-indigo-500 hover:bg-indigo-50/50 dark:hover:bg-slate-800 transition"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white shrink-0">
-                <Download className="h-5 w-5" />
+                <Network className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Ekspor Laporan PDF Formal</h4>
+                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Struktur Kelas 7-2</h4>
                 <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
-                  Cetak rekap data profil, absensi & aktivitas sekolah.
+                  Lihat & kelola susunan pengurus Wali Kelas, Ketua, Sekretaris & Seksi.
+                </p>
+              </div>
+            </button>
+
+            {/* 5. Galeri Kegiatan 7-2 */}
+            <button
+              onClick={() => onNavigate('class_documentation')}
+              className="flex items-start gap-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 p-4 text-left hover:border-sky-500 hover:bg-sky-50/50 dark:hover:bg-slate-800 transition"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-500 text-white shrink-0">
+                <Camera className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Galeri Kegiatan 7-2</h4>
+                <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
+                  Foto-foto Pramuka, Gotong Royong, Classmeeting, & Pentas Seni 7-2.
+                </p>
+              </div>
+            </button>
+
+            {/* 6. Profil & Data Sekolah */}
+            <button
+              onClick={() => onNavigate('school_data')}
+              className="flex items-start gap-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 p-4 text-left hover:border-sky-500 hover:bg-sky-50/50 dark:hover:bg-slate-800 transition"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-800 text-white shrink-0">
+                <Building2 className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Profil & Data Sekolah</h4>
+                <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
+                  Ubah identitas sekolah, upload logo, dan perbarui data real-time.
+                </p>
+              </div>
+            </button>
+
+            {/* 7. Integrasi API & WA */}
+            <button
+              onClick={() => onNavigate('api_integrations')}
+              className="flex items-start gap-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 p-4 text-left hover:border-emerald-500 hover:bg-emerald-50/50 dark:hover:bg-slate-800 transition"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-700 text-white shrink-0">
+                <Webhook className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Integrasi API & WA</h4>
+                <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
+                  Konfigurasi WhatsApp Gateway API & webhook terintegrasi.
                 </p>
               </div>
             </button>

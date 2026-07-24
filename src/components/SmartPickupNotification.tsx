@@ -75,14 +75,9 @@ export const SmartPickupNotification: React.FC<SmartPickupProps> = ({
 
   // Generate QR image when student is selected for card modal
   useEffect(() => {
-    if (selectedStudentForCard?.qrToken) {
-      QRCode.toDataURL(selectedStudentForCard.qrToken, { width: 280, margin: 2 }).then((url) => {
-        setQrCodeDataUrl(url);
-      });
-    } else if (selectedStudentForCard) {
-      const generatedToken = `SIMPATI_QR_${selectedStudentForCard.name.replace(/\s+/g, '').toUpperCase()}_${selectedStudentForCard.nisn}`;
-      onUpdatePickupStatus(selectedStudentForCard.id, selectedStudentForCard.pickupStatus, generatedToken);
-      QRCode.toDataURL(generatedToken, { width: 280, margin: 2 }).then((url) => {
+    if (selectedStudentForCard) {
+      const canonicalToken = selectedStudentForCard.qrToken || `SIMPATI-72-${selectedStudentForCard.nisn}`;
+      QRCode.toDataURL(canonicalToken, { width: 280, margin: 2 }).then((url) => {
         setQrCodeDataUrl(url);
       });
     }
@@ -90,12 +85,12 @@ export const SmartPickupNotification: React.FC<SmartPickupProps> = ({
 
   // Handle Scanning / Marking Barcode Pulang by Teacher
   const handleScanBarcodePulang = (st: Student) => {
-    const token = st.qrToken || `SIMPATI_QR_${st.name.replace(/\s+/g, '').toUpperCase()}_${st.nisn}`;
+    const token = st.qrToken || `SIMPATI-72-${st.nisn}`;
     onUpdatePickupStatus(st.id, 'sudah_pulang', token);
     setLastScannedStudent(st);
 
     setScanMessage({
-      text: `⚡ BARCODE DIPINDAI: Siswa/i ${st.name} (${st.className}) sudah dipindai. Notifikasi WhatsApp kepulangan telah berhasil dikirim ke Orang Tua (${st.parentName} - ${st.parentPhone})!`,
+      text: `⚡ BARCODE DIPINDAI: Siswa/i ${st.name} (${st.className}) telah dipindai (Token: ${token}). Notifikasi WhatsApp kepulangan telah berhasil dikirim ke Orang Tua (${st.parentName} - ${st.parentPhone})!`,
       type: 'success',
     });
   };
@@ -111,12 +106,13 @@ export const SmartPickupNotification: React.FC<SmartPickupProps> = ({
   // Handle manual input in Scanner Modal
   const handleScannerSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const tokenClean = scanInputToken.trim();
+    const tokenClean = scanInputToken.trim().toLowerCase();
     const matchedStudent = students.find(
       (s) =>
-        (s.qrToken && s.qrToken.toLowerCase() === tokenClean.toLowerCase()) ||
-        s.nisn === tokenClean ||
-        s.name.toLowerCase().includes(tokenClean.toLowerCase())
+        (s.qrToken && s.qrToken.toLowerCase() === tokenClean) ||
+        s.nisn.toLowerCase() === tokenClean ||
+        `simpati-72-${s.nisn}`.toLowerCase() === tokenClean ||
+        s.name.toLowerCase().includes(tokenClean)
     );
 
     if (matchedStudent) {

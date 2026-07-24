@@ -12,13 +12,11 @@ import { UserManagement } from './components/UserManagement';
 import { SmartPickupNotification } from './components/SmartPickupNotification';
 import { AttendanceManager } from './components/AttendanceManager';
 import { FinancialManager } from './components/FinancialManager';
-import { ReportsPDFExporter } from './components/ReportsPDFExporter';
 import { SecurityEncryptionManager } from './components/SecurityEncryptionManager';
 import { ApiIntegrationsManager } from './components/ApiIntegrationsManager';
 import { ParentAuthModal } from './components/ParentAuthModal';
 
 import { useSimpatiStore } from './lib/store';
-import { exportSchoolProfilePDF } from './lib/pdf';
 
 export default function App() {
   const store = useSimpatiStore();
@@ -62,6 +60,7 @@ export default function App() {
         onToggleDarkMode={handleToggleDarkMode}
         lastSyncTime={store.lastSyncTime}
         onOpenParentAuth={() => setIsParentAuthOpen(true)}
+        onNavigate={(tab) => setActiveTab(tab as any)}
       />
 
       {/* Main Layout Body */}
@@ -86,7 +85,6 @@ export default function App() {
               users={store.users}
               auditLogs={store.auditLogs}
               onNavigate={setActiveTab}
-              onExportPDF={() => exportSchoolProfilePDF(store.profile)}
               onOpenParentAuth={() => setIsParentAuthOpen(true)}
             />
           )}
@@ -137,18 +135,9 @@ export default function App() {
             <AttendanceManager
               students={store.students}
               attendance={store.attendance}
+              profile={store.profile}
               onUpdateAttendance={store.setAttendance}
               showToast={store.showToast}
-            />
-          )}
-
-          {activeTab === 'reports_pdf' && (
-            <ReportsPDFExporter
-              school={store.profile}
-              students={store.students}
-              attendance={store.attendance}
-              financials={store.financials}
-              auditLogs={store.auditLogs}
             />
           )}
 

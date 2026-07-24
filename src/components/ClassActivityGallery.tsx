@@ -380,17 +380,49 @@ export const ClassActivityGallery: React.FC<ClassActivityGalleryProps> = ({
               </div>
 
               <div>
-                <label className="font-semibold text-slate-700 dark:text-slate-300">
-                  URL Foto Sampul Kegiatan
+                <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+                  Foto Kegiatan (Ambil dari Penyimpanan HP / Galeri)
                 </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="https://images.unsplash.com/..."
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  className="mt-1 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-slate-900 dark:text-white"
-                />
+                <div className="flex flex-col sm:flex-row items-center gap-3">
+                  <label className="w-full sm:w-auto inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white px-4 py-2.5 text-xs font-bold transition shadow-xs shrink-0">
+                    <ImageIcon className="h-4 w-4" />
+                    <span>Pilih Foto dari Galeri HP</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            if (reader.result) {
+                              setImageUrl(reader.result as string);
+                            }
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                  <span className="text-[11px] text-slate-400">atau masukkan URL foto:</span>
+                  <input
+                    type="text"
+                    required
+                    placeholder="https://images.unsplash.com/..."
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    className="flex-1 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-slate-900 dark:text-white"
+                  />
+                </div>
+                {imageUrl && (
+                  <div className="mt-2 relative h-28 w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-950">
+                    <img src={imageUrl} alt="Pratinjau" className="h-full w-full object-cover" />
+                    <span className="absolute bottom-1 right-2 bg-slate-900/80 text-[10px] text-emerald-400 px-2 py-0.5 rounded font-mono">
+                      Foto siap diunggah
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-3">

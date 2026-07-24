@@ -10,6 +10,7 @@ import {
   Lock,
   CheckCircle,
   HeartHandshake,
+  Users,
 } from 'lucide-react';
 import { User, SchoolProfile, NotificationItem } from '../types';
 
@@ -24,6 +25,7 @@ interface HeaderProps {
   onToggleDarkMode: () => void;
   lastSyncTime: string;
   onOpenParentAuth: () => void;
+  onNavigate?: (tab: string) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -37,6 +39,7 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleDarkMode,
   lastSyncTime,
   onOpenParentAuth,
+  onNavigate,
 }) => {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const unreadCount = notifications.filter((n) => !n.read).length;
@@ -95,6 +98,18 @@ export const Header: React.FC<HeaderProps> = ({
           <HeartHandshake className="h-4 w-4 text-sky-600 dark:text-sky-400" />
           <span>Portal Orang Tua</span>
         </button>
+
+        {/* User dan Foto Profil Button */}
+        {onNavigate && (
+          <button
+            onClick={() => onNavigate('user_management')}
+            className="hidden md:flex items-center gap-1.5 rounded-xl border border-sky-300 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-3 py-1.5 text-xs font-bold text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/60 shadow-sm transition"
+            title="Kelola User & Foto Profil"
+          >
+            <Users className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+            <span>User & Foto Profil</span>
+          </button>
+        )}
 
         {/* Notifications Trigger */}
         <button

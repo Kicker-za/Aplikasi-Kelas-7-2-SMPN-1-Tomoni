@@ -5,7 +5,6 @@ import {
   Users,
   MessageSquareText,
   CalendarCheck2,
-  FileSpreadsheet,
   ShieldCheck,
   Webhook,
   Sparkles,
@@ -22,7 +21,6 @@ export type TabKey =
   | 'user_management'
   | 'smart_pickup'
   | 'attendance'
-  | 'reports_pdf'
   | 'security_vault'
   | 'api_integrations';
 
@@ -49,6 +47,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
     badgeColor?: string;
   }[] = [
     { key: 'overview', label: 'Dashboard Utama', icon: LayoutDashboard },
+    { key: 'attendance', label: 'Absensi & Kehadiran', icon: CalendarCheck2 },
+    {
+      key: 'smart_pickup',
+      label: 'Notifikasi Pulang Sekolah',
+      icon: MessageSquareText,
+      badge: unreadPickupCount > 0 ? unreadPickupCount : undefined,
+      badgeColor: 'bg-amber-500 text-white',
+    },
+    { key: 'user_management', label: 'User dan Foto Profil', icon: Users },
     {
       key: 'class_structure',
       label: 'Struktur Kelas 7-2',
@@ -64,16 +71,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
       badgeColor: 'bg-sky-500 text-white',
     },
     { key: 'school_data', label: 'Profil & Data Sekolah', icon: Building2 },
-    { key: 'user_management', label: 'User & Foto Profil', icon: Users },
-    {
-      key: 'smart_pickup',
-      label: 'Notifikasi Ortu & QR',
-      icon: MessageSquareText,
-      badge: unreadPickupCount > 0 ? unreadPickupCount : undefined,
-      badgeColor: 'bg-amber-500 text-white',
-    },
-    { key: 'attendance', label: 'Absensi & Kehadiran', icon: CalendarCheck2 },
-    { key: 'reports_pdf', label: 'Ekspor Laporan PDF', icon: FileSpreadsheet },
     { key: 'api_integrations', label: 'Integrasi API & WA', icon: Webhook },
   ];
 
@@ -118,22 +115,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
         })}
       </nav>
 
-      {/* Portal Orang Tua Banner Card */}
+      {/* Portal Orang Tua & User Banner Card */}
       {onOpenParentAuth && (
         <div className="mt-6 hidden md:block rounded-2xl border border-sky-200 dark:border-sky-900 bg-sky-50/80 dark:bg-sky-950/40 p-3.5 space-y-2">
           <div className="flex items-center gap-2 text-xs font-bold text-sky-900 dark:text-sky-200">
             <HeartHandshake className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-            <span>Portal Orang Tua</span>
+            <span>Portal & Akun User</span>
           </div>
           <p className="text-[11px] text-sky-700 dark:text-sky-300 leading-snug">
-            Daftar / Login akun wali murid untuk akses presensi & notifikasi penjemputan anak.
+            Akses portal wali murid & kelola foto profil pengguna dari HP.
           </p>
-          <button
-            onClick={onOpenParentAuth}
-            className="w-full rounded-xl bg-sky-600 hover:bg-sky-700 py-1.5 text-xs font-bold text-white shadow-sm transition"
-          >
-            Daftar & Login Orang Tua
-          </button>
+          <div className="grid grid-cols-2 gap-1.5 pt-1">
+            <button
+              onClick={onOpenParentAuth}
+              className="rounded-xl bg-sky-600 hover:bg-sky-700 py-1.5 px-2 text-[11px] font-bold text-white shadow-xs transition text-center"
+            >
+              Portal Ortu
+            </button>
+            <button
+              onClick={() => onSelectTab('user_management')}
+              className="rounded-xl border border-sky-300 dark:border-sky-800 bg-white dark:bg-sky-900/60 hover:bg-sky-100 dark:hover:bg-sky-800 py-1.5 px-2 text-[11px] font-bold text-sky-800 dark:text-sky-200 shadow-xs transition text-center"
+            >
+              User & Foto
+            </button>
+          </div>
         </div>
       )}
 

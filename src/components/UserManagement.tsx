@@ -334,6 +334,31 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                 />
               </div>
 
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  Foto Profil (Penyimpanan HP)
+                </label>
+                <div className="flex items-center gap-3">
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                    <Upload className="h-4 w-4 text-sky-600" />
+                    <span>Pilih Foto HP</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleAvatarUpload(e)}
+                      className="hidden"
+                    />
+                  </label>
+                  {avatarUrl && (
+                    <img
+                      src={avatarUrl}
+                      alt="Avatar Preview"
+                      className="h-9 w-9 rounded-full object-cover border border-slate-200 dark:border-slate-700"
+                    />
+                  )}
+                </div>
+              </div>
+
               <div className="pt-3 flex gap-2 justify-end">
                 <button
                   type="button"
