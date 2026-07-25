@@ -57,7 +57,7 @@ const INITIAL_USERS: User[] = [
   },
   {
     id: 'usr-ortu-1',
-    name: 'Drs. Hendra Wijaya (Contoh Ortu)',
+    name: 'Drs. Hendra Wijaya',
     email: 'hendra.wijaya@gmail.com',
     role: 'orang_tua',
     phone: '081298761122',
@@ -66,7 +66,7 @@ const INITIAL_USERS: User[] = [
     isActive: true,
     createdAt: '2026-07-21',
     studentNisn: '0061234561',
-    studentName: 'Muhammad Rizky Wijaya (Contoh Data)',
+    studentName: 'Muhammad Rizky Wijaya',
     relation: 'Ayah',
   },
 ];
@@ -232,20 +232,10 @@ const INITIAL_ATTENDANCE: AttendanceRecord[] = [
 ];
 
 const INITIAL_FINANCIAL: FinancialRecord[] = [
-  { id: 'fin-1', date: '2026-07-20', type: 'masuk', amount: 3500000, category: 'Kas Siswa Bulanan', description: 'Iuran kas bulanan Kelas 7-2 (Contoh Data)', recordedBy: 'Wali Kelas 7-2' },
+  { id: 'fin-1', date: '2026-07-20', type: 'masuk', amount: 3500000, category: 'Kas Siswa Bulanan', description: 'Iuran kas bulanan Kelas 7-2', recordedBy: 'Wali Kelas 7-2' },
 ];
 
-const INITIAL_NOTIFICATIONS: NotificationItem[] = [
-  {
-    id: 'notif-1',
-    title: 'Notifikasi Sistem (Contoh Data)',
-    message: 'Telah terhubung ke sistem SIMPATI SMPN 1 Tomoni.',
-    type: 'info',
-    timestamp: new Date().toLocaleTimeString('id-ID'),
-    read: false,
-    category: 'sistem',
-  },
-];
+const INITIAL_NOTIFICATIONS: NotificationItem[] = [];
 
 const INITIAL_SECURITY_CONFIG: SecurityConfig = {
   encryptionAlgorithm: 'AES-256-GCM',
@@ -269,7 +259,7 @@ const INITIAL_INTEGRATIONS: ThirdPartyIntegration = {
 };
 
 const INITIAL_AUDIT_LOGS: AuditLog[] = [
-  { id: 'aud-1', timestamp: new Date().toISOString(), actor: 'walikelas72@smpn1tomoni.sch.id', action: 'SYSTEM_BOOT', details: 'Sistem SIMPATI Siap Digunakan (Contoh Data Log)', ipAddress: '180.252.12.98', encryptedHash: '8a91b2c3d4e5f6g7' },
+  { id: 'aud-1', timestamp: new Date().toISOString(), actor: 'walikelas72@smpn1tomoni.sch.id', action: 'SYSTEM_BOOT', details: 'Sistem SIMPATI Siap Digunakan', ipAddress: '180.252.12.98', encryptedHash: '8a91b2c3d4e5f6g7' },
 ];
 
 const INITIAL_CLASS_STRUCTURE: ClassStructureMember[] = [
@@ -284,26 +274,26 @@ const INITIAL_CLASS_STRUCTURE: ClassStructureMember[] = [
   },
   {
     id: 'struct-2',
-    role: 'Ketua Kelas (Contoh)',
-    name: 'Muhammad Rizky Wijaya (Contoh Data)',
+    role: 'Ketua Kelas',
+    name: 'Muhammad Rizky Wijaya',
     nisnNip: 'NISN: 0061234561',
     avatarUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=300&q=80',
     phone: '081298761122',
-    duties: 'Memimpin organisasi kelas dan mengoordinasikan kegiatan harian (Contoh Data).',
+    duties: 'Memimpin organisasi kelas dan mengoordinasikan kegiatan harian.',
   },
 ];
 
 const INITIAL_CLASS_ACTIVITIES: ClassActivity[] = [
   {
     id: 'act-1',
-    title: 'Kemah Bakti Pramuka (Contoh Dokumentasi Kelas 7-2)',
+    title: 'Kemah Bakti Pramuka',
     date: '18 - 20 Juli 2026',
     category: 'Pramuka',
     location: 'Bumi Perkemahan Wotu, Luwu Timur',
-    description: 'Dokumentasi contoh kegiatan siswa Kelas 7-2 SMPN 1 Tomoni (Contoh Data Kegiatan).',
+    description: 'Dokumentasi kegiatan siswa Kelas 7-2 SMPN 1 Tomoni.',
     imageUrl: '/src/assets/images/doc_pramuka_1784797410043.jpg',
     photosCount: 18,
-    tags: ['ContohData', 'Pramuka', 'Kelas72'],
+    tags: ['Pramuka', 'Kelas72'],
   },
 ];
 
@@ -652,7 +642,20 @@ export function useSimpatiStore() {
 
   const [notifications, setNotifications] = useState<NotificationItem[]>(() => {
     const saved = localStorage.getItem('simpati_v3_notifications');
-    return saved ? JSON.parse(saved) : INITIAL_NOTIFICATIONS;
+    if (saved) {
+      try {
+        const parsed: NotificationItem[] = JSON.parse(saved);
+        return parsed.filter(
+          (n) =>
+            !n.title?.includes('Contoh Data') &&
+            !n.title?.includes('(Contoh') &&
+            !n.message?.includes('Contoh Data')
+        );
+      } catch {
+        return INITIAL_NOTIFICATIONS;
+      }
+    }
+    return INITIAL_NOTIFICATIONS;
   });
 
   const [security, setSecurity] = useState<SecurityConfig>(() => {

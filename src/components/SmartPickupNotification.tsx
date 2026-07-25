@@ -492,7 +492,7 @@ export const SmartPickupNotification: React.FC<SmartPickupProps> = ({
                 className="flex-1 rounded-xl bg-sky-600 hover:bg-sky-700 py-2.5 text-xs font-bold text-white shadow-md transition flex items-center justify-center gap-2"
               >
                 <ScanLine className="h-4 w-4" />
-                <span>Simulasi Scan Barcode Ini</span>
+                <span>Pindai Barcode Ini</span>
               </button>
 
               <button

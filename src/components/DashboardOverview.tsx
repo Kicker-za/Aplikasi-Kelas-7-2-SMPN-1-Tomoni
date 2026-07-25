@@ -153,11 +153,11 @@ export const DashboardOverview: React.FC<OverviewProps> = ({
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {/* Top Row: Portal Orang Tua & User dan Foto Profil Side-by-Side */}
+            {/* Portal Orang Tua */}
             {onOpenParentAuth && (
               <button
                 onClick={onOpenParentAuth}
-                className="flex items-center justify-between rounded-2xl border border-sky-300 dark:border-sky-800 bg-gradient-to-r from-sky-500 to-indigo-600 p-4 text-white shadow-md hover:opacity-95 transition"
+                className="col-span-1 sm:col-span-2 flex items-center justify-between rounded-2xl border border-sky-300 dark:border-sky-800 bg-gradient-to-r from-sky-500 to-indigo-600 p-4 text-white shadow-md hover:opacity-95 transition"
               >
                 <div className="flex items-center gap-3">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md text-white shrink-0">
@@ -176,27 +176,6 @@ export const DashboardOverview: React.FC<OverviewProps> = ({
                 </div>
               </button>
             )}
-
-            <button
-              onClick={() => onNavigate('user_management')}
-              className="flex items-center justify-between rounded-2xl border border-sky-300 dark:border-sky-800 bg-gradient-to-r from-blue-600 to-sky-600 p-4 text-white shadow-md hover:opacity-95 transition"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md text-white shrink-0">
-                  <Users className="h-6 w-6" />
-                </div>
-                <div className="text-left">
-                  <h4 className="text-sm font-extrabold">User dan Foto Profil</h4>
-                  <p className="text-xs text-sky-100">
-                    Kelola akun & upload foto HP
-                  </p>
-                </div>
-              </div>
-              <div className="hidden sm:flex items-center gap-1 bg-white/20 hover:bg-white/30 backdrop-blur-md px-2.5 py-1.5 rounded-xl text-xs font-bold text-white shrink-0">
-                <span>Kelola</span>
-                <ArrowUpRight className="h-4 w-4" />
-              </div>
-            </button>
 
             {/* 1. Absensi & Kehadiran */}
             <button
