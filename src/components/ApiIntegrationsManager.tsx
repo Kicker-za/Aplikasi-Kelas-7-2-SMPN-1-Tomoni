@@ -12,9 +12,17 @@ import {
   AlertTriangle,
   Activity,
   Layers,
+  KeyRound,
+  Globe,
+  Trash2,
 } from 'lucide-react';
 import { ThirdPartyIntegration } from '../types';
-import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+import {
+  supabase,
+  isSupabaseConfigured,
+  getSupabaseCredentials,
+  saveSupabaseCredentials,
+} from '../lib/supabaseClient';
 
 interface IntegrationProps {
   integrations: ThirdPartyIntegration;
@@ -33,6 +41,11 @@ export const ApiIntegrationsManager: React.FC<IntegrationProps> = ({
   const [isTesting, setIsTesting] = useState(false);
   const [testLog, setTestLog] = useState<string | null>(null);
 
+  // Supabase input credentials state
+  const initialCreds = getSupabaseCredentials();
+  const [supabaseInputUrl, setSupabaseInputUrl] = useState(initialCreds.url);
+  const [supabaseInputKey, setSupabaseInputKey] = useState(initialCreds.key);
+
   // Supabase test state
   const [isCheckingSupabase, setIsCheckingSupabase] = useState(false);
   const [supabaseTestResult, setSupabaseTestResult] = useState<{
@@ -41,6 +54,26 @@ export const ApiIntegrationsManager: React.FC<IntegrationProps> = ({
     message: string;
     tablesChecked?: string[];
   } | null>(null);
+
+  const handleSaveSupabaseCreds = (e: React.FormEvent) => {
+    e.preventDefault();
+    const result = saveSupabaseCredentials(supabaseInputUrl, supabaseInputKey);
+    if (result.success) {
+      showToast(result.message, 'success');
+      // Auto test connection
+      handleTestSupabaseConnection();
+    } else {
+      showToast(result.message, 'error');
+    }
+  };
+
+  const handleClearSupabaseCreds = () => {
+    setSupabaseInputUrl('');
+    setSupabaseInputKey('');
+    saveSupabaseCredentials('', '');
+    showToast('Kredensial Supabase berhasil dibersihkan. Sistem kembali ke mode lokal.', 'info');
+    setSupabaseTestResult(null);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -310,16 +343,16 @@ export const ApiIntegrationsManager: React.FC<IntegrationProps> = ({
         )}
       </div>
 
-      {/* Section 4: Supabase Cloud Database Integration Status */}
-      <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm space-y-4">
+      {/* Section 4: Supabase Cloud Database Integration Status & Config */}
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <Database className="h-5 w-5 text-sky-600" />
-              4. Integrasi Database Supabase & Realtime
+              4. Konfigurasi Kredensial Supabase & Realtime Database
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Status koneksi database cloud Supabase, sinkronisasi realtime, dan penanganan fallback lokal.
+              Masukkan Supabase Project URL dan Anon Key untuk menghubungkan basis data cloud PostgreSQL & sinkronisasi realtime.
             </p>
           </div>
 
@@ -337,6 +370,60 @@ export const ApiIntegrationsManager: React.FC<IntegrationProps> = ({
             <span>Uji Koneksi Supabase</span>
           </button>
         </div>
+
+        {/* Input Form for Supabase Credentials */}
+        <form onSubmit={handleSaveSupabaseCreds} className="space-y-4 pt-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                <Globe className="h-3.5 w-3.5 text-sky-500" />
+                <span>Supabase Project URL</span>
+              </label>
+              <input
+                type="text"
+                value={supabaseInputUrl}
+                onChange={(e) => setSupabaseInputUrl(e.target.value)}
+                placeholder="https://xyzxyz.supabase.co"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3.5 py-2.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                <KeyRound className="h-3.5 w-3.5 text-sky-500" />
+                <span>Supabase Anon Key (Public Key)</span>
+              </label>
+              <input
+                type="password"
+                value={supabaseInputKey}
+                onChange={(e) => setSupabaseInputKey(e.target.value)}
+                placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3.5 py-2.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono"
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 pt-1">
+            <button
+              type="submit"
+              className="flex items-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-700 px-5 py-2.5 text-xs font-bold text-white shadow-sm transition"
+            >
+              <Save className="h-4 w-4" />
+              <span>Simpan Kredensial Supabase</span>
+            </button>
+
+            {(supabaseInputUrl || supabaseInputKey) && (
+              <button
+                type="button"
+                onClick={handleClearSupabaseCreds}
+                className="flex items-center gap-1.5 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/40 px-3.5 py-2.5 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                <span>Bersihkan</span>
+              </button>
+            )}
+          </div>
+        </form>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
           <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 p-3.5 space-y-1">
